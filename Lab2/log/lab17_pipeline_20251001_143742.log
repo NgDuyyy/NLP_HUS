@@ -1,0 +1,48 @@
+[2025-10-01 14:37:42] === STARTING NLP DATA PIPELINE WITH SPARK ===
+[2025-10-01 14:37:42] Job started at: 2025-10-01 14:37:42
+[2025-10-01 14:37:42] STEP 1: Initializing Spark Session
+[2025-10-01 14:37:50] Spark Session created successfully
+[2025-10-01 14:37:50] Spark version: 4.0.1
+[2025-10-01 14:37:50] Spark UI available at: http://localhost:4040
+[2025-10-01 14:37:50] Using 12 cores for processing
+[2025-10-01 14:37:50] STEP 2: Reading compressed JSON data
+[2025-10-01 14:37:50] Loading data from: data/c4-train.00000-of-01024-30K.json.gz
+[2025-10-01 14:37:53] Successfully loaded 1000 records in 2,51 seconds
+[2025-10-01 14:37:53] Data schema:
+[2025-10-01 14:37:53] Sample of original data:
+[2025-10-01 14:37:53] STEP 3: Setting up Text Preprocessing Pipeline
+[2025-10-01 14:37:53] Configuring RegexTokenizer for text tokenization
+[2025-10-01 14:37:53] Configuring StopWordsRemover to filter common words
+[2025-10-01 14:37:53] STEP 4: Setting up Vectorization Pipeline
+[2025-10-01 14:37:53] Configuring HashingTF with 20000 features
+[2025-10-01 14:37:53] Configuring IDF for inverse document frequency weighting
+[2025-10-01 14:37:53] STEP 5: Assembling and fitting the complete pipeline
+[2025-10-01 14:37:53] Pipeline assembled with 4 stages
+[2025-10-01 14:37:53] Pipeline stages: Tokenizer -> StopWordsRemover -> HashingTF -> IDF
+[2025-10-01 14:37:53] Fitting pipeline to data...
+[2025-10-01 14:37:55] Pipeline fitting completed in 1,50 seconds
+[2025-10-01 14:37:55] STEP 6: Transforming data with fitted pipeline
+[2025-10-01 14:37:55] Data transformation completed in 0,73 seconds
+[2025-10-01 14:37:55] Processed 1000 records successfully
+[2025-10-01 14:37:55] STEP 7: Saving feature vectors to results directory
+[2025-10-01 14:37:55] Saving feature vectors to: results/lab17_pipeline_output.txt
+[2025-10-01 14:37:55] Feature vectors saved to results/lab17_pipeline_output.txt in 0,19 seconds
+[2025-10-01 14:37:55] STEP 8: Computing pipeline statistics
+[2025-10-01 14:37:57] === PIPELINE STATISTICS ===
+[2025-10-01 14:37:57] Total documents processed: 1000
+[2025-10-01 14:37:57] Unique vocabulary size: 874
+[2025-10-01 14:37:57] Average tokens per document: 18,10
+[2025-10-01 14:37:57] Average filtered tokens per document: 12,00
+[2025-10-01 14:37:57] Feature vector dimensions: 20000
+[2025-10-01 14:37:57] First vector non-zero elements: 14
+[2025-10-01 14:37:57] Vector sparsity: 99,93%
+[2025-10-01 14:37:57] Sample of final processed data:
+[2025-10-01 14:37:57] STEP 9: Cleaning up resources
+[2025-10-01 14:37:57] Pipeline completed successfully at: 2025-10-01 14:37:57
+[2025-10-01 14:37:57] Total execution time: 0 minutes 15 seconds
+[2025-10-01 14:37:57] === PIPELINE EXECUTION SUMMARY ===
+[2025-10-01 14:37:57] Data loaded: 1000 records
+[2025-10-01 14:37:57] Data processed: 1000 records
+[2025-10-01 14:37:57] Feature vectors saved to: results/lab17_pipeline_output.txt
+[2025-10-01 14:37:57] Log file saved to: E:\HUS_Y3\NLP\Lab2\log\lab17_pipeline_20251001_143742.log
+[2025-10-01 14:37:57] NLP DATA PIPELINE COMPLETED SUCCESSFULLY!

@@ -1,0 +1,32 @@
+# sbt build artifacts
+target/
+project/target/
+project/project/target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files (optional - keep if you want to show execution logs)
+# log/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Spark warehouse
+spark-warehouse/
+
+# Java/Scala compiled files
+*.class
+*.jar
+!project/*.jar
+
+# sbt plugin files
+project/plugins/project/
