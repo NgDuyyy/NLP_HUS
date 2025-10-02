@@ -14,7 +14,8 @@ Pipeline xử lý NLP được thực hiện theo các bước tuần tự sau:
 **Bước 1: Tải Dữ Liệu**
 - Đọc dữ liệu JSON nén từ file `c4-train.00000-of-01024-30K.json.gz`
 - Sử dụng JSON reader tích hợp của Spark với tự động suy luận schema
-- Tải 1000 bản ghi văn bản vào Spark DataFrame
+- Sử dụng biến `limitDocuments = 1000` để tùy chỉnh số lượng tài liệu xử lý
+- Tải dữ liệu vào Spark DataFrame với khả năng điều chỉnh linh hoạt
 
 **Bước 2: Cấu Hình Pipeline Tiền Xử Lý Văn Bản**
 - Cấu hình RegexTokenizer để tách từ cấp độ từ sử dụng pattern `\\W+`
@@ -24,12 +25,18 @@ Pipeline xử lý NLP được thực hiện theo các bước tuần tự sau:
 **Bước 3: Thiết Lập Vector Hóa Đặc Trưng**
 - Cấu hình HashingTF với 20000 chiều đặc trưng để tính toán tần suất từ
 - Thiết lập IDF (Inverse Document Frequency) transformer cho TF-IDF weighting
+- Thêm Normalizer layer với L2 normalization để chuẩn hóa các vector đặc trưng
 - Liên kết các thành phần thành một ML Pipeline thống nhất
 
 **Bước 4: Thực Thi Pipeline**
-- Lắp ráp tất cả thành phần thành một Spark ML Pipeline 4 giai đoạn
+- Lắp ráp tất cả thành phần thành một Spark ML Pipeline 5 giai đoạn (thêm Normalizer)
 - Fit pipeline trên dữ liệu training để học IDF weights
 - Transform dữ liệu qua tất cả các giai đoạn pipeline
+
+**Bước 5: Tìm Kiếm Tài Liệu Tương Tự**
+- Triển khai hàm cosine similarity để tính độ tương tự giữa các vector
+- Chọn một tài liệu làm query và tính similarity với tất cả tài liệu khác
+- Hiển thị top 5 tài liệu tương tự nhất với điểm similarity
 
 **Bước 5: Lưu Trữ Kết Quả**
 - Trích xuất feature vectors và văn bản gốc từ DataFrame đã xử lý
@@ -40,11 +47,11 @@ Pipeline xử lý NLP được thực hiện theo các bước tuần tự sau:
 
 ### 2.1 Tóm Tắt Thực Thi
 Pipeline thực thi thành công với các chỉ số hiệu suất sau:
-- Tổng thời gisn thực thi: 15 giây
-- Thời gian tải dữ liệu: 2,58 giây
-- Thời gian fit pipeline: 1,49 giây
-- Thời gian transform dữ liệu: 0,68 giây
-- Thời gian lưu kết quả: 0,23 giây
+- Tổng thời gian thực thi: 29 giây (bao gồm Spark UI pause)
+- Thời gian fit pipeline: 1,58 giây  
+- Thời gian transform dữ liệu: 0,63 giây cho 1000 bản ghi
+- Thời gian tính toán cosine similarity: ~0,06 giây
+- Hiệu suất xử lý: 1587 tài liệu/giây
 
 ### 2.2 Thống Kê Xử Lý
 - Tổng số tài liệu được xử lý: 1000
@@ -112,28 +119,67 @@ Triển khai bao gồm hai Scala objects chính:
 
 ### 5.2 Kiến Trúc Pipeline
 ```
-Raw Text Data → RegexTokenizer → StopWordsRemover → HashingTF → IDF → Feature Vectors
+Raw Text Data → RegexTokenizer → StopWordsRemover → HashingTF → IDF → Normalizer → Normalized Feature Vectors
 ```
 
-### 5.3 Chiến Lược Xử Lý Lỗi
+### 5.3 Cosine Similarity Search
+```
+Normalized Vectors → Query Selection → Similarity Calculation → Ranking → Top 5 Results
+```
+
+### 5.4 Chiến Lược Xử Lý Lỗi
 Triển khai xử lý lỗi sử dụng pattern Try/Success/Failure của Scala:
 - Khôi phục lỗi graceful với logging lỗi chi tiết
 - Dọn dẹp tài nguyên trong finally blocks
 - Thông báo lỗi thông tin với stack traces
 
-## 6. Dependencies Và Thư Viện Bên Ngoài
+## 6. Các Tính Năng Cập Nhật Mới
 
-### 6.1 Apache Spark Libraries
+### 6.1 Biến Tùy Chỉnh Số Lượng Tài Liệu
+- Thêm biến `limitDocuments = 1000` để dễ dàng thay đổi số lượng tài liệu xử lý
+- Thay thế hardcode `.limit(1000)` bằng `.limit(limitDocuments)`
+- Cải thiện tính linh hoạt và khả năng tùy chỉnh của pipeline
+
+### 6.2 Đo Lường Hiệu Suất Chi Tiết
+- Thêm timing cho từng giai đoạn chính: pipeline fitting và data transformation
+- Hiển thị thời gian thực thi với độ chính xác 2 chữ số thập phân
+- Cung cấp thông tin về số lượng bản ghi được xử lý
+
+### 6.3 Chuẩn Hóa Vector với Normalizer
+- Tích hợp Normalizer layer với L2 normalization (Euclidean norm)
+- Chuẩn hóa TF-IDF feature vectors để cải thiện chất lượng tính toán similarity
+- Tạo normalized_features column cho các phép toán tiếp theo
+
+### 6.4 Tìm Kiếm Tài Liệu Tương Tự
+- Triển khai hàm `cosineSimilarity()` để tính độ tượng tự giữa các vector
+- Chọn tài liệu query (index 3) và tính similarity với tất cả tài liệu khác
+- Hiển thị top 5 tài liệu tương tự nhất với điểm similarity và nội dung
+- Cung cấp thông tin chi tiết về tài liệu tương tự nhất
+
+### 6.5 Kết Quả Cosine Similarity
+- Query document: "Sample 4 - Text preprocessing is a crucial step in natural language processing pipelines"
+- Top similarity scores: 44.67% - 43.04%
+- Most similar document: Document 83 với 44.67% similarity
+- Thuật toán hoạt động hiệu quả với normalized vectors
+
+## 7. Dependencies Và Thư Viện Bên Ngoài
+
+### 7.1 Apache Spark Libraries
 - `spark-core_2.13:4.0.1`: Chức năng Spark cốt lõi
 - `spark-sql_2.13:4.0.1`: DataFrame và SQL operations
-- `spark-mllib_2.13:4.0.1`: Các thành phần machine learning pipeline
+- `spark-mllib_2.13:4.0.1`: Các thành phần machine learning pipeline (bao gồm Normalizer)
 
-### 6.2 Scala Standard Libraries
+### 7.2 Scala Standard Libraries
 - `scala.util.{Try, Success, Failure}`: Xử lý lỗi
 - `java.io.{PrintWriter, BufferedWriter, FileWriter}`: File I/O operations
-- `java.time.LocalDateTime`: Tạo timestamp
+- `java.time.LocalDateTime`: Tảo timestamp
 
-### 6.3 Cấu Hình Build
+### 7.3 MLlib Components Mới
+- `org.apache.spark.ml.feature.Normalizer`: Chuẩn hóa vector với L2 normalization
+- `org.apache.spark.ml.linalg.{Vector, Vectors}`: Xử lý vector và tính toán cosine similarity
+- `org.apache.spark.sql.Row`: Truy cập dữ liệu từ DataFrame rows
+
+### 7.4 Cấu Hình Build
 Dự án sử dụng sbt với các dependencies chính sau:
 ```scala
 libraryDependencies ++= Seq(
@@ -143,6 +189,19 @@ libraryDependencies ++= Seq(
 )
 ```
 
-## 7. Kết Luận
-Pipeline xử lý 1000 tài liệu hiệu quả, tạo ra các biểu diễn đặc trưng có ý nghĩa phù hợp.
-Tất cả các tiêu chí đánh giá đã được thỏa mãn.
+## 8. Kết Luận
+
+### 8.1 Thành Công Của Pipeline
+Pipeline NLP đã được cập nhật thành công với tất cả 4 yêu cầu mới:
+- **100% hoàn thành**: Tất cả các tính năng yêu cầu đã được triển khai thành công
+- **Hiệu suất tốt**: Xử lý 1000 tài liệu trong vòng 2.2 giây (không tính UI pause)
+- **Chất lượng cao**: Cosine similarity cho kết quả đáng tin cậy với điểm tương tự lên đến 44.67%
+
+### 8.2 Giá Trị Thêm Vào
+- **Linh hoạt**: Biến `limitDocuments` cho phép tùy chỉnh dễ dàng
+- **Trong suốt**: Đo lường hiệu suất chi tiết giúp theo dõi và tối ưu hóa
+- **Chất lượng**: Vector normalization cải thiện độ chính xác của similarity search
+- **Thực tế**: Tìm kiếm tài liệu tương tự là ứng dụng thực tế quan trọng trong NLP
+
+### 8.3 Kết Quả Cuối Cùng
+Dự án đã thành công xây dựng một pipeline NLP hoàn chỉnh với các tính năng tiên tiến, đáp ứng vượt mức yêu cầu ban đầu và sẵn sàng cho các ứng dụng thực tế.
