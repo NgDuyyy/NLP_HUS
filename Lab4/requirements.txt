@@ -1,0 +1,18 @@
+# Lab 5: Text Classification Requirements
+
+# Core dependencies
+scikit-learn>=1.0.0
+numpy>=1.21.0
+
+# Hugging Face datasets (for real-world data)
+datasets>=2.0.0
+
+# PDF reading (for extracting lab instructions)
+PyPDF2>=3.0.0
+pdfplumber>=0.7.0
+
+# Optional: For PySpark implementation (advanced)
+pyspark>=3.3.0
+
+# Development dependencies
+pytest>=7.0.0
