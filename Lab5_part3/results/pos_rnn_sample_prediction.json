@@ -1,0 +1,17 @@
+{
+  "sentence": "I love NLP",
+  "prediction": [
+    [
+      "I",
+      "PRON"
+    ],
+    [
+      "love",
+      "VERB"
+    ],
+    [
+      "NLP",
+      "ADP"
+    ]
+  ]
+}
