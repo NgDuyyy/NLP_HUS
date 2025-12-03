@@ -32,6 +32,7 @@ data/**/pos_rnn/**
 data/UD_English-EWT-r1.0
 data/UD_English-EWT-r1.0.zip
 data/c4-train.00000-of-01024-30K.json.gz
+data/**/c4-train.00000-of-01024-30K.json.gz
 
 # IDE / tooling
 .vscode/
