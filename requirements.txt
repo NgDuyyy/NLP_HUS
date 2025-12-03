@@ -1,0 +1,17 @@
+spacy
+nltk
+stanza
+scikit-learn
+pandas
+numpy
+gensim
+transformers
+tokenizers
+pyspark
+matplotlib
+seaborn
+keras
+tensorflow
+datasets==2.19.1
+evaluate
+conllu
