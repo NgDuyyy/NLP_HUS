@@ -56,12 +56,12 @@
 5. **Emotion & style control**: thêm variance adaptor (FastSpeech2), hoặc prompt-based control (e.g., "happy", "narration").
 6. **Safety & watermark**:
    - Nhúng watermark vào miền tần số hoặc embedding (SONIC, SynthID).
-   - Lưu metadata (speaker consent, license) + kiểm tra nội dung đầu vào.
+   - Lưu metadata (speaker consent, license) =+ kiểm tra nội dung đầu vào.
 7. **Serving**:
    - Dùng ONNX/TensorRT để tối ưu inference cho Level 2.
    - Với Level 3 diffusion, áp dụng caching, chunked generation, hoặc decoder song song để giảm latency.
 
-## 5. Xu hướng nghiên cứu nổi bật (2024–2025)
+## 5. Xu hướng nghiên cứu nổi bật (2024-2025)
 - **Diffusion + consistency models**: giúp tạo spectrogram mượt và giảm số bước sampling (CLAPSpeech, StyleTTS2).
 - **Large Audio Models (LAM)**: hợp nhất ASR, TTS, voice conversion trong một framework (Bark, GPT-SoVITS, SeamlessM4T v2).
 - **Speech tokenization**: sử dụng codec (EnCodec, SoundStream) để biểu diễn âm thanh thành discrete tokens, cho phép TTS dựa trên language models.
