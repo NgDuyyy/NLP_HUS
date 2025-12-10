@@ -1,0 +1,48 @@
+{
+  "main_verb_example": {
+    "text": "The cat chased the mouse and the dog watched them.",
+    "main_verb": "chased",
+    "dependency": "ROOT"
+  },
+  "noun_chunk_example": {
+    "text": "The big, fluffy white cat is sleeping on the warm mat.",
+    "chunks": [
+      {
+        "text": "The big, fluffy white cat",
+        "start": 0,
+        "end": 6
+      },
+      {
+        "text": "the warm mat",
+        "start": 9,
+        "end": 12
+      }
+    ]
+  },
+  "path_example": {
+    "text": "Apple is looking at buying U.K. startup for $1 billion.",
+    "token": "startup",
+    "path": [
+      {
+        "text": "startup",
+        "dep": "dobj",
+        "pos": "NOUN"
+      },
+      {
+        "text": "buying",
+        "dep": "pcomp",
+        "pos": "VERB"
+      },
+      {
+        "text": "at",
+        "dep": "prep",
+        "pos": "ADP"
+      },
+      {
+        "text": "looking",
+        "dep": "ROOT",
+        "pos": "VERB"
+      }
+    ]
+  }
+}

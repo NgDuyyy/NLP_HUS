@@ -5,7 +5,7 @@
 ## 1. Tóm tắt mục tiêu
 - Ôn lại các khái niệm cốt lõi của Transformer (encoder, decoder, self-attention) và ba họ omô hình chính.
 - Thực hành các API `pipeline` của Hugging Face cho ba bài toán NLP kinh điển.
-- Lưu lại mã chạy được và kết quả (`Lab6/transformer_demos.py`, `Lab6/results/lab6_part1_outputs.json`) để tái sử dụng.
+- Lưu lại mã chạy được và kết quả (`src/lab6/transformer_demos.py`, `result/lab6/lab6_part1_outputs.json`) để tái sử dụng.
 
 ## 2. Bài thực hành
 Các thí nghiệm được chạy trong `transformer_demos.py`. Mỗi phần dưới đây trình bày cấu hình, kết quả quan sát và phần trả lời câu hỏi.
@@ -53,5 +53,26 @@ GPT là mô hình tự hồi quy: tối đa hóa xác suất token kế tiếp d
 
 **C2.** *Tại sao cần attention_mask khi Mean Pooling?*  
 Padding chỉ là token giả để cân bằng độ dài. Nếu không mask, các giá trị này sẽ kéo trung bình về 0 và làm sai biểu diễn. Nhân với mặt nạ giúp chỉ các token thực đóng góp vào tổng và mẫu số.
+
+## 3. Dependency Parsing Practice (spaCy)
+
+Phần này hiện thực toàn bộ yêu cầu trong `lab6_dependency_parsing_pandoc.pdf`. Mã nguồn nằm tại `src/lab6/dependency_parsing.py` và sinh kết quả dưới `result/lab6/lab6_dependency_parsing_outputs.json`.
+
+### 3.1 Hàm `find_main_verb`
+- Input: chuỗi "The cat chased the mouse and the dog watched them.".
+- Chiến lược: duyệt toàn bộ token, ưu tiên token có `dep_ == ROOT` và `pos_` thuộc {VERB, AUX}; nếu không có, lấy bất kỳ ROOT nào để tránh trả về `None`.
+- Kết quả JSON: `main_verb = "chased"`, đúng với gốc của mệnh đề đầu tiên, đồng thời ghi lại nhãn `dependency = ROOT` để thuận tiện kiểm tra.
+
+### 3.2 Gộp cụm danh từ thủ công
+- Không dùng `Doc.noun_chunks` mà duyệt từng noun/proper-noun, gom các modifier (`amod`, `compound`, `det`, `poss`, `nummod`, `quantmod`) đứng trước danh từ để tạo Span.
+- Ví dụ câu "The big, fluffy white cat is sleeping on the warm mat." cho ra hai cụm chính: `The big, fluffy white cat` và `the warm mat`, được nối vào JSON với chỉ số `start/end` để đối chiếu trong `doc`.
+
+### 3.3 Đường đi tới ROOT
+- Hàm `get_path_to_root(token)` lặp theo `token.head` cho đến khi gặp ROOT hoặc self-loop (phòng hờ spaCy edge cases), đồng thời lưu từng cặp `(text, dep, pos)` giúp debug.
+- Với token "startup" trong câu "Apple is looking at buying U.K. startup for $1 billion.", đường đi ghi nhận lần lượt `startup -> buying -> at -> looking`, minh họa cấu trúc phụ thuộc "dobj → pcomp → prep → ROOT".
+
+### 3.4 Lưu vết chạy
+- Script tự tạo thư mục `result/lab6/` nếu thiếu, sau đó dump JSON bằng UTF-8. Thao tác này giữ dữ liệu thô trong repo nhưng nằm ngoài `data/` để tránh va chạm với file lớn.
+- Khi lần đầu chạy, chương trình cố tải `en_core_web_md`; nếu thiếu sẽ gọi `spacy.cli.download`. Trong trường hợp không thể tải, fallback về `en_core_web_sm` và thông báo rõ ràng.
 
 

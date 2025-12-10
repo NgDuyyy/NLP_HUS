@@ -4,7 +4,7 @@ from pathlib import Path
 import torch
 from transformers import AutoModel, AutoTokenizer, pipeline
 
-OUTPUT_DIR = Path('Lab6/results')
+OUTPUT_DIR = Path('result/lab6')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
