@@ -1,4 +1,4 @@
-# Lab 6 – Part 1 - Report
+# Lab 6 & 7
  
 **Môi trường:** Python venv tại `Lab1_2/.venv`, `transformers==4.57.3`, chạy CPU với `torch`.
 
